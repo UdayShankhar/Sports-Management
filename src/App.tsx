@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { increment } from "./actions";
+import reducer from "./reducers/reducer";
+import axios from "axios";
 
-function App() {
+const App = ({ count, increment }: any) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://mocki.io/v1/b4544a37-0765-405f-baf6-6675845d5a0e"
+        );
+        console.log(response?.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+    return () => {
+      // console.log("Component will unmount");
+    };
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={increment}>Increment</button>
     </div>
   );
-}
+};
 
-export default App;
+const mapStateToProps = (state: any) => ({
+  count: state.reducer.count,
+});
+
+const mapDispatchToProps = {
+  increment,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
